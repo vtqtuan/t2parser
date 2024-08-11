@@ -12,7 +12,6 @@ class Parser:
         # Parse with underthesea
         if self.model == 'underthesea':
             start_time = time.time()
-
             out_details = pos_tag(content)
             # Handle details
             for parsed_detail in out_details:
@@ -24,7 +23,7 @@ class Parser:
                 self.details.append(temp_detail)
 
             end_time = time.time()
-            self.processing_time = start_time - end_time
+            self.processing_time = (end_time - start_time) * 1000
 
         # Parse with VnCoreNLP
         else:
@@ -43,7 +42,7 @@ class Parser:
                     self.details.append(temp_detail)
 
             end_time = time.time()
-            self.processing_time = start_time - end_time
+            self.processing_time = (end_time - start_time) * 1000
 
     def get_result(self):
         # Process is not done

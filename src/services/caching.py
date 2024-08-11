@@ -35,7 +35,7 @@ class CachedRequest:
     @processing_time.setter
     def processing_time(self, value):
         if type(value) is not float:
-            raise ValueError('The \'processing_time\' should be int')
+            raise ValueError('The \'processing_time\' should be float')
         self._processing_time = value
 
 @Singleton
@@ -73,7 +73,7 @@ class SharedCaching:
             data_id = kwargs['data_id']
             if data_id in self._cached.keys():
                 self._cached[data_id].details = kwargs['details']
-                self._cached[data_id].processing_time = kwargs['processing_time']
+                self._cached[data_id].processing_time = float(kwargs['processing_time'])
         finally:
             self._lock.release()
             
@@ -85,7 +85,7 @@ class SharedCaching:
             if data_id in self._cached.keys():
                 req.data_id = self._cached[data_id].data_id
                 req.details = self._cached[data_id].details
-                req.processing_time = self._cached[data_id].processing_time
+                req.processing_time = float(self._cached[data_id].processing_time)
 
         finally:
             self._lock.release()
