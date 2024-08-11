@@ -4,6 +4,4 @@ fastapi-sqlalchemy==0.2.1
 python-dotenv==0.15.0
 streamlit==1.36.0
 underthesea==6.8.4
-transformers
-tokenizers
-torch
+python-multipart==0.0.9

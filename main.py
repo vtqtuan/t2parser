@@ -1,4 +1,5 @@
 import logging
+import os
 
 import uvicorn
 from fastapi import FastAPI
@@ -9,12 +10,21 @@ from src.api.api import router
 from src.models.base_model import Base
 from src.db.base import engine
 from src.core.config import settings
+from src.services.caching import SharedCaching
+from src.services.resource_manager import ResourceManager
+
 
 # Logger
 logging.config.fileConfig(settings.LOGGING_CONFIG_FILE, disable_existing_loggers=False)
 
 # Init SQLite database
 Base.metadata.create_all(bind=engine)
+
+def prepare_data_dir() -> None:
+    try:
+        os.makedirs(os.path.join(settings.DATA_DIR, 'resouces'))
+    except Exception:
+        return
 
 def get_application() -> FastAPI:
     application = FastAPI(
@@ -40,5 +50,10 @@ def get_application() -> FastAPI:
 
 
 if __name__ == '__main__':
+    prepare_data_dir()
+
+    # Init Resource Manager instance
+    ResourceManager.Instance().path = os.path.join(settings.DATA_DIR, 'resouces')
+
     app = get_application()
     uvicorn.run(app, host="0.0.0.0", port=8090)

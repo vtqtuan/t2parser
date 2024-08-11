@@ -7,6 +7,7 @@ class CachedRequest:
         self._data_id = str(uuid.uuid4()).replace('-', '').lower()
         self._details = list()
         self._processing_time = -1
+        self._resource_path = ''
 
     @property
     def data_id(self):
@@ -37,6 +38,16 @@ class CachedRequest:
         if type(value) is not float:
             raise ValueError('The \'processing_time\' should be float')
         self._processing_time = value
+
+    @property
+    def resource_path(self):
+        return self._resource_path
+    
+    @resource_path.setter
+    def resource_path(self, value):
+        if type(value) is not str:
+            raise ValueError('The \'resource_path\' should be str')
+        self._resource_path = value
 
 @Singleton
 class SharedCaching:
