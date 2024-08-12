@@ -1,5 +1,6 @@
 import logging
 import os
+import io
 
 import uvicorn
 from fastapi import FastAPI
@@ -7,7 +8,7 @@ from fastapi_sqlalchemy import DBSessionMiddleware
 from starlette.middleware.cors import CORSMiddleware
 
 from src.api.api import router
-from src.models.base_model import Base
+from src.models.base import Base
 from src.db.base import engine
 from src.core.config import settings
 from src.services.caching import SharedCaching
@@ -22,7 +23,17 @@ Base.metadata.create_all(bind=engine)
 
 def prepare_data_dir() -> None:
     try:
-        os.makedirs(os.path.join(settings.DATA_DIR, 'resouces'))
+        # Create data_dir
+        os.makedirs(os.path(settings.DATA_DIR))
+
+        # Create resource folder
+        os.makedirs(os.path.join(settings.DATA_DIR, 'resources'))
+
+        # Create database
+        db_path = os.path.join(settings.DATA_DIR, 't2parser.db')
+        if not os.path.isfile(db_path):
+            with io.open(db_path, 'w') as file:
+                pass
     except Exception:
         return
 
@@ -50,10 +61,11 @@ def get_application() -> FastAPI:
 
 
 if __name__ == '__main__':
+    # Init data dir
     prepare_data_dir()
 
     # Init Resource Manager instance
-    ResourceManager.Instance().path = os.path.join(settings.DATA_DIR, 'resouces')
+    ResourceManager.Instance().path = os.path.join(settings.DATA_DIR, 'resources')
 
     app = get_application()
     uvicorn.run(app, host="0.0.0.0", port=8090)

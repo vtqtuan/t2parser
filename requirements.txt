@@ -5,3 +5,4 @@ python-dotenv==0.15.0
 streamlit==1.36.0
 underthesea==6.8.4
 python-multipart==0.0.9
+py-vncorenlp
