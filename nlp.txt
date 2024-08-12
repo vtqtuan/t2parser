@@ -1,0 +1,3 @@
+Open data, hay tạm dịch là dữ liệu mở, là loại dữ liệu có thể được sử dụng một cách rộng rãi, bởi bất kỳ ai mà không cần xin bản quyền hay giấy phép để sử dụng chúng.
+
+Thông thường, dữ liệu mở là nhóm dữ liệu về thống kê định kỳ về sức khỏe cộng đồng, môi trường, giáo dục,... Và nhóm dữ liệu này có nhiệm vụ phục vụ cho việc phát triển chung của cộng đồng.
