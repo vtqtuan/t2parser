@@ -13,13 +13,18 @@ with st.container():
 
     # INPUT SECTION
     with left_column:
-        text_input = st.text_input(
-            "Input the text you want to POS",
-            placeholder="Enter here...",
+        # text_input = st.text_input(
+        #     "Input the text you want to POS",
+        #     placeholder="Enter here...",
+        # )
+
+        text_input = st.text_area(
+            "Input the text you want to POS analyze",
+            placeholder="Enter anything here...",
         )
 
         uploaded_file = st.file_uploader(
-            "Choose a data file. Your data won't be stored as well!", 
+            "Choose a data file. Your data will be kept secretly and securely.", 
             accept_multiple_files=False, 
             type=['csv', 'json', 'xls', 'xlsx', 'txt']
         )
@@ -39,11 +44,10 @@ with st.container():
     
         st.write(f'Model selected: :green[{SELECTED_MODEL}]')
 
-    # BUTTON EXTRACT EXECUTE
-    if st.button('Extract'):
+    # BUTTON Analyze EXECUTE
+    if st.button('Analyze'):
         st.divider()
-        
-        #Limit the input to 255 characters
+
         if len(text_input) > 255:
                 user_input = text_input[:255]
                 st.error("The input exceeds 255 characters. Please try again")
@@ -52,6 +56,7 @@ with st.container():
         # Check if the user has provided both text and file
         if (text_input and uploaded_file) or (not text_input and not uploaded_file):
             st.warning("Please provide only one input: either text or file, not both or none.")
+        #Limit the input to 255 characters
         else:
             if text_input:
                 # Gọi API để lấy data_id từ văn bản
