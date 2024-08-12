@@ -1,75 +1,108 @@
 import streamlit as st
-from pyecharts import options as opts
-from pyecharts.charts import Line
-import streamlit.web.cli as stcli
-import os
+from pos_execute import fetch_data_id, fetch_data_id_file, get_pos_data, generate_table_and_chunks
+from constants import POS_MEANINGS
 
-def process_pos(sentence):
-    # Placeholder function for T2PARSER
-    # Replace this with actual T2PARSER logic
-    return f"Processed POS tags for: {sentence}"
+st.set_page_config(page_title="Streamline Analyst", page_icon=":rocket:", layout="wide")
 
-def main():
-    st.set_page_config(page_title="T2PARSER App", layout="wide")
+# MAIN SECTION
+with st.container():
+    st.divider()
+    st.header("Let's Get Started")
 
-    # Sidebar navigation
-    # st.sidebar.title("T2PARSER App")
-    # page = st.sidebar.radio("Select Page", ["POS Sentence", "POS Paragraph"])
-    # Initialize session state for page navigation
-    if 'page' not in st.session_state:
-        st.session_state.page = "POS Sentence"
+    left_column, right_column = st.columns([6, 4])
 
-    # Sidebar navigation with buttons
-    st.sidebar.title("T2PARSER App")
+    # INPUT SECTION
+    with left_column:
+        text_input = st.text_input(
+            "Input the text you want to POS",
+            placeholder="Enter here...",
+        )
+
+        uploaded_file = st.file_uploader(
+            "Choose a data file. Your data won't be stored as well!", 
+            accept_multiple_files=False, 
+            type=['csv', 'json', 'xls', 'xlsx', 'txt']
+        )
+
+    # MODEL SELECTION
+    model_mapping = {
+        'undertheseanlp model': 'underthesea',
+        'vnCoreNLP model': 'vncorenlp'
+    }
+    with right_column:
+        SELECTED_MODEL = st.selectbox(
+            'Which model you want to use for POS analysis?',
+            model_mapping.keys()
+        )
+        
+        actual_model_value = model_mapping[SELECTED_MODEL]
     
-    if st.sidebar.button("POS Sentence"):
-        st.session_state.page = "POS Sentence"
-    if st.sidebar.button("POS Paragraph"):
-        st.session_state.page = "POS Paragraph"
+        st.write(f'Model selected: :green[{SELECTED_MODEL}]')
 
-    if st.session_state.page == "POS Sentence":
-        st.title("T2PARSER - Sentence")
-        st.write("Enter your sentence")
-
-        sentence = st.text_input("", "Như rất là giỏi luôn", max_chars=200)
+    # BUTTON EXTRACT EXECUTE
+    if st.button('Extract'):
+        st.divider()
         
-        if st.button("Process"):
-            result = process_pos(sentence)
-            st.write("Result")
-            st.download_button("Download Nhuratlagioi_result.txt", result, file_name="Nhuratlagioi_result.txt")
+        #Limit the input to 255 characters
+        if len(text_input) > 255:
+                user_input = text_input[:255]
+                st.error("The input exceeds 255 characters. Please try again")
+                st.stop()  # Stop further execution
+                  
+        # Check if the user has provided both text and file
+        if (text_input and uploaded_file) or (not text_input and not uploaded_file):
+            st.warning("Please provide only one input: either text or file, not both or none.")
+        else:
+            if text_input:
+                # Gọi API để lấy data_id từ văn bản
+                data_id, err = fetch_data_id(text_input, actual_model_value)
+            elif uploaded_file:
+                # Gọi API để lấy data_id từ file tải lên
+                data_id, err = fetch_data_id_file(uploaded_file, actual_model_value)
 
-    elif st.session_state.page == "POS Paragraph":
-        st.title("T2PARSER - Paragraph")
-        st.write("Drag and drop your file")
+            if data_id:
+                # Sử dụng data_id để lấy dữ liệu POS
+                
+                data_analyze = get_pos_data(data_id)
 
-        
-        # Đoạn code này để upload chỉ 1 file
-        #uploaded_file = st.file_uploader("Choose a file", type=["txt"],accept_multiple_files=True)
-        #if uploaded_file is not None:
-            #st.write(f"Uploaded file: {uploaded_file.name}")
-            #content = uploaded_file.read().decode("utf-8")
+                details = data_analyze.get("details", [])
+                
+                if len(details) == 0 :
+                    st.error("An internal error occurred. Please retry the request again")
+                
+                pos_data, colored_chunks = generate_table_and_chunks(data_analyze)
+                
+                if not pos_data.empty:
+                    table_column, chunks_column = st.columns(2)
 
-            #if st.button("Process"):
-                #result = process_pos(content)
-                #st.write("Result")
-                #st.download_button("Download NHURATLAGIOI_RESULT.txt", result, file_name="NHURATLAGIOI_RESULT.txt")
+                    # Hiển thị kết quả phân tích POS
+                    with table_column:
+                        st.write("Results of POS analysis:")
+                        
+                        # Convert DataFrame to HTML for styling
+                        html = pos_data.to_html(escape=False, index=False)
+                        
+                        st.markdown(html, unsafe_allow_html=True)
 
-        # Đoạn code này để upload nhiều file - File uploader to allow multiple file uploads
-        uploaded_files = st.file_uploader("Choose files", type=["txt"], accept_multiple_files=True)
-        
-        # Check if any files are uploaded
-        if uploaded_files is not None:
-            for uploaded_file in uploaded_files:
-                st.write(f"Uploaded file: {uploaded_file.name}")
-                # Read the content of the uploaded file
-                content = uploaded_file.read().decode("utf-8")
-
-                # Process button for each uploaded file
-                if st.button(f"Process {uploaded_file.name}"):
-                    result = process_pos(content)
-                    st.write("Result")
-                    # Download button for the processed result of each file
-                    st.download_button(f"Download {uploaded_file.name}_RESULT.txt", result, file_name=f"{uploaded_file.name}_RESULT.txt")
-
-if __name__ == "__main__":
-    main()
+                    # Hiển thị chuỗi POS đã được tô màu
+                    with chunks_column:
+                        st.write("POS of tag")
+                        st.markdown(
+                            f"""
+                            <div style="
+                                background-color: rgb(38, 39, 48); 
+                                border: 1px solid #d0d0d0; 
+                                border-radius: 5px; 
+                                padding: 10px; 
+                                min-height: 150px; 
+                                max-height: 300px; 
+                                overflow-y: auto;
+                                font-family: sans-serif;
+                            ">
+                                {colored_chunks}
+                            </div>
+                            """,
+                            unsafe_allow_html=True
+                        )
+            else:
+                st.error(f"Failed to retrieve data_id. Error: {err}")
