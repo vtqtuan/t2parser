@@ -1,6 +1,9 @@
 from src.utils.singleton import Singleton
 import uuid
 import threading
+import json
+
+from src.db.database import create_request, update_request, get_request
 
 class CachedRequest:
     def __init__(self):
@@ -65,9 +68,8 @@ class SharedCaching:
             self._cached[new_req.data_id] = new_req
         finally:
             self._lock.release()
+            create_request(new_req.data_id)
             return new_req.data_id
-
-        
 
     def remove_request(self, data_id: str = ''):
         self._lock.acquire()
@@ -87,6 +89,7 @@ class SharedCaching:
                 self._cached[data_id].processing_time = float(kwargs['processing_time'])
         finally:
             self._lock.release()
+            update_request(kwargs['data_id'], kwargs['details'], float(kwargs['processing_time']))
             
 
     def get_request(self, data_id: str = '') -> CachedRequest:
@@ -97,6 +100,12 @@ class SharedCaching:
                 req.data_id = self._cached[data_id].data_id
                 req.details = self._cached[data_id].details
                 req.processing_time = float(self._cached[data_id].processing_time)
+
+            else:
+                db_req = get_request(data_id)
+                req.data_id = db_req.data_id
+                req.details = json.loads(db_req.details)
+                req.processing_time = db_req.processing_time
 
         finally:
             self._lock.release()

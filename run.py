@@ -9,7 +9,7 @@ from starlette.middleware.cors import CORSMiddleware
 
 from src.api.api import router
 from src.models.base import Base
-from src.db.base import engine
+from src.db.database import engine
 from src.core.config import settings
 from src.services.caching import SharedCaching
 from src.services.resource_manager import ResourceManager

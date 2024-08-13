@@ -2,7 +2,7 @@ import streamlit as st
 from pos_execute import fetch_data_id, fetch_data_id_file, get_pos_data, generate_table_and_chunks
 from constants import POS_MEANINGS
 
-st.set_page_config(page_title="Streamline Analyst", page_icon=":rocket:", layout="wide")
+st.set_page_config(page_title="T2 Parser", page_icon=":rocket:", layout="wide")
 
 # MAIN SECTION
 with st.container():
@@ -26,13 +26,13 @@ with st.container():
         uploaded_file = st.file_uploader(
             "Choose a data file. Your data will be kept secretly and securely.", 
             accept_multiple_files=False, 
-            type=['csv', 'json', 'xls', 'xlsx', 'txt']
+            type=['txt']
         )
 
     # MODEL SELECTION
     model_mapping = {
-        'undertheseanlp model': 'underthesea',
-        'vnCoreNLP model': 'vncorenlp'
+        'underthesea': 'underthesea',
+        'VnCoreNLP': 'vncorenlp'
     }
     with right_column:
         SELECTED_MODEL = st.selectbox(

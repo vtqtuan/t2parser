@@ -16,6 +16,6 @@ class Base:
 class AbstractModel(Base):
     __abstract__ = True
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    created_at = Column(DateTime, default=datetime.now)
-    updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+    id = Column(Integer, primary_key=True, autoincrement=True, index=True)
+    # created_at = Column(DateTime, default=datetime.now)
+    # updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
