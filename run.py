@@ -14,6 +14,7 @@ from src.core.config import settings
 from src.services.caching import SharedCaching
 from src.services.resource_manager import ResourceManager
 
+import subprocess
 
 # Logger
 logging.config.fileConfig(settings.LOGGING_CONFIG_FILE, disable_existing_loggers=False)
@@ -66,6 +67,9 @@ if __name__ == '__main__':
 
     # Init Resource Manager instance
     ResourceManager.Instance().path = os.path.join(settings.DATA_DIR, 'resources')
+
+    gui_cmd = ['streamlit', 'run', './src/gui/gui.py']
+    process = subprocess.Popen(gui_cmd)
 
     app = get_application()
     uvicorn.run(app, host="0.0.0.0", port=8090)
