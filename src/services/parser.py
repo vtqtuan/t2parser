@@ -3,6 +3,10 @@ from py_vncorenlp import VnCoreNLP
 from fastapi import File, UploadFile
 from src.services.resource_manager import ResourceManager
 import time
+import threading
+
+VN_CORE_NLP_MODEL = VnCoreNLP(save_dir='.', annotators=["pos"])
+VN_CORE_NLP_MODEL_LOCK = threading.Lock()
 
 class Parser:
     def __init__(self, model: str = 'underthesea') -> None:
@@ -29,10 +33,12 @@ class Parser:
 
         # Parse with VnCoreNLP
         else:
-            self.model = VnCoreNLP(save_dir='.', annotators=["pos"])
             start_time = time.time()
+            
+            VN_CORE_NLP_MODEL_LOCK.acquire()
+            out_details = VN_CORE_NLP_MODEL.annotate_text(content.decode('utf-8'))
+            VN_CORE_NLP_MODEL_LOCK.release()
 
-            out_details = self.model.annotate_text(content.decode('utf-8'))
             # Handle details
             for sentence_details in out_details.values():
                 for parsed_detail in sentence_details:
@@ -45,6 +51,7 @@ class Parser:
 
             end_time = time.time()
             self.processing_time = (end_time - start_time) * 1000
+
 
     def execute_file(self, data_id) -> None:
         if self.model == 'underthesea':
