@@ -1,5 +1,5 @@
 import streamlit as st
-from pos_execute import fetch_data_id, fetch_data_id_file, get_pos_data, generate_table_and_chunks
+from pos_execute import get_pos_data_old, fetch_data_id, fetch_data_id_file, get_pos_data, generate_table_and_chunks
 from constants import POS_MEANINGS
 
 st.set_page_config(page_title="T2 Parser", page_icon=":rocket:", layout="wide")
@@ -25,7 +25,7 @@ with st.container():
         
         if data_id_search:
             data_analyze_search, err_search = get_pos_data(data_id_search)
-            #print('HELLO WORLD', data_analyze_search)
+            print('HELLO WORLD', data_analyze_search)
 
             if err_search:
                 st.error(f"We cannot find any data_id: {data_id_search}. Please try again. Detailed error: {err_search}")
@@ -139,7 +139,7 @@ with st.container():
             if data_id:
                 # Sử dụng data_id để lấy dữ liệu POS
                 
-                data_analyze = get_pos_data(data_id)
+                data_analyze = get_pos_data_old(data_id)
 
                 details = data_analyze.get("details", [])
                 
