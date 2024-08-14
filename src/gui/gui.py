@@ -9,6 +9,77 @@ with st.container():
     st.divider()
     st.header("Let's Get Started")
 
+    # left_column_new, right_column_new = st.columns([7, 3])
+    # with left_column_new:
+    search_input = st.text_input(
+                "Found your result with data_id",
+                placeholder="Enter your data_id here...",
+                max_chars=100
+    )
+
+    if st.button('Search'):
+        data_id_search = search_input
+        if len(data_id_search) == 0:
+            st.error("Please enter a valid data_id")
+            
+        
+        if data_id_search:
+            data_analyze_search, err_search = get_pos_data(data_id_search)
+            #print('HELLO WORLD', data_analyze_search)
+
+            if err_search:
+                st.error(f"We cannot find any data_id. Please try again: {data_id_search}. Error: {err_search}")
+                #st.stop()
+            else:
+                details_search = data_analyze_search.get("details", [])
+            
+                if len(details_search) == 0 :
+                    st.error("An internal error occurred. Please retry the request again")
+                    #st.stop()
+                pos_data_search, colored_chunks_search = generate_table_and_chunks(data_analyze_search)
+            
+                if not pos_data_search.empty:
+                    table_column, chunks_column = st.columns(2)
+
+                    # Hiển thị kết quả phân tích POS
+                    with table_column:
+                        st.write("Results of POS analysis:")
+                        #st.write('Data ID:', data_id)
+
+                        
+                        # Convert DataFrame to HTML for styling
+                        html = pos_data_search.to_html(escape=False, index=False)
+                        
+                        st.markdown(html, unsafe_allow_html=True)
+
+                    # Hiển thị chuỗi POS đã được tô màu
+                    with chunks_column:
+                            st.write("POS of tag")
+                            st.markdown(f"Data ID: <p style='color:yellow;'>{data_id_search}</p>", unsafe_allow_html=True)
+                            st.markdown(
+                                f"""
+                                <div style="
+                                    background-color: rgb(38, 39, 48); 
+                                    border: 1px solid #d0d0d0; 
+                                    border-radius: 5px; 
+                                    padding: 10px; 
+                                    min-height: 150px; 
+                                    max-height: 300px; 
+                                    overflow-y: auto;
+                                    font-family: sans-serif;
+                                ">
+                                    {colored_chunks_search}
+                                </div>
+                                """,
+                                unsafe_allow_html=True
+                            )
+                else: 
+                    st.error(f"Cannot retrieve data_id: {data_id_search}")
+    st.divider()
+    st.subheader("If you don't have data_id, please input your text or upload your file")
+
+    # PHẦN NÀY DÙNG ĐỂ NHẬP INPUT VÀ CHỌN MODEL NẾU NGƯỜI DÙNG KHÔNG CÓ SẴN DATA_ID
+
     left_column, right_column = st.columns([6, 4])
 
     # INPUT SECTION
@@ -83,6 +154,9 @@ with st.container():
                     # Hiển thị kết quả phân tích POS
                     with table_column:
                         st.write("Results of POS analysis:")
+                        #st.write('Data ID:', data_id)
+
+                        
                         
                         # Convert DataFrame to HTML for styling
                         html = pos_data.to_html(escape=False, index=False)
@@ -92,6 +166,7 @@ with st.container():
                     # Hiển thị chuỗi POS đã được tô màu
                     with chunks_column:
                         st.write("POS of tag")
+                        st.markdown(f"Data ID: <p style='color:yellow;'>{data_id}</p>", unsafe_allow_html=True)
                         st.markdown(
                             f"""
                             <div style="
