@@ -28,7 +28,7 @@ with st.container():
             #print('HELLO WORLD', data_analyze_search)
 
             if err_search:
-                st.error(f"We cannot find any data_id. Please try again: {data_id_search}. Error: {err_search}")
+                st.error(f"We cannot find any data_id: {data_id_search}. Please try again. Detailed error: {err_search}")
                 #st.stop()
             else:
                 details_search = data_analyze_search.get("details", [])

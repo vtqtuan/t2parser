@@ -9,7 +9,7 @@ POS_MEANINGS = {
     "C": ("Liên từ", "#90EE90"),       # lightgreen
     "Cc": ("Liên từ đẳng lập", "#90EE90"),
     "CH": ("Dấu câu", "#87CEEB"),       # skyblue
-    "E": ("Giới từ", "#FFFFE0"),       # lightyellow
+    "E": ("Giới từ", "#dbcecf"),       # lightpink
     "Fw": ("Từ nước ngoài", "#ADD8E6"), # lightblue
     "FW": ("Từ nước ngoài", "#ADD8E6"),
     "I": ("Thán từ", "#800080"),       # purple
@@ -20,8 +20,8 @@ POS_MEANINGS = {
     "Nc": ("Danh từ chỉ loại", "#ecb3ff"),
     "Ne": ("Danh từ chỉ loại", "#ecb3ff"),
     "Ni": ("Danh từ kí hiệu", "#ad66ff"),
-    "Np": ("Danh từ riêng", "#f9ff85"), # lightyellow
-    "NNP": ("Danh từ riêng", "#f9ff85"),
+    "Np": ("Danh từ riêng", "#ffdfba"), # lightyellow
+    "NNP": ("Danh từ riêng", "#ffdfba"),
     "Ns": ("Danh từ", "#FA8072"),
     "Nu": ("Danh từ đơn vị", "#8B0000"),
     "Ny": ("Danh từ viết tắt", "#8B0000"),
