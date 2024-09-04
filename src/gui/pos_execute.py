@@ -49,9 +49,21 @@ def get_pos_data(data_id):
     try:
         response.raise_for_status()
         data = response.json()
-        return data
+        return data, None
     except Exception as err:
         return None, err
+    
+# Hàm gọi API để lấy dữ liệu POS - cũ
+def get_pos_data_old(data_id):
+    url = f"{API_URL}/{data_id}"
+    response = requests.get(url)
+    
+    try:
+        response.raise_for_status()
+        data = response.json()
+        return data
+    except Exception as err:
+        return None
 
 
 # từ dữ liệu trả về, tạo bảng và câu mới theo mã màu

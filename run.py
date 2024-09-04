@@ -72,4 +72,4 @@ if __name__ == '__main__':
     process = subprocess.Popen(gui_cmd)
 
     app = get_application()
-    uvicorn.run(app, host="0.0.0.0", port=8090)
+    uvicorn.run(app, host="0.0.0.0", port=8000)
