@@ -72,11 +72,13 @@ class Parser:
             self.processing_time = (end_time - start_time) * 1000
 
         else:
-            self.model = VnCoreNLP(save_dir='.', annotators=["pos"])
             start_time = time.time()
 
+            VN_CORE_NLP_MODEL_LOCK.acquire()
+
             for sentence in ResourceManager.Instance().read_sentence(data_id):
-                out_details = self.model.annotate_text(sentence.decode('utf-8'))
+                out_details = VN_CORE_NLP_MODEL.annotate_text(sentence)
+                
                 # Handle details
                 for sentence_details in out_details.values():
                     for parsed_detail in sentence_details:
@@ -86,6 +88,8 @@ class Parser:
                         temp_detail["tag"] = parsed_detail['posTag']
 
                         self.details.append(temp_detail)
+
+            VN_CORE_NLP_MODEL_LOCK.release()
 
             end_time = time.time()
             self.processing_time = (end_time - start_time) * 1000
