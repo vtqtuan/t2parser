@@ -25,7 +25,6 @@ with st.container():
         
         if data_id_search:
             data_analyze_search, err_search = get_pos_data(data_id_search)
-            print('HELLO WORLD', data_analyze_search)
 
             if err_search:
                 st.error(f"We cannot find any data_id: {data_id_search}. Please try again. Detailed error: {err_search}")
